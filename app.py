@@ -1,13 +1,15 @@
 import os
-from langchain_community.tools.requests import RequestsWrapper
+import requests
 from langchain_community.document_loaders import BSHTMLLoader
 from langchain.prompts import PromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.graph import Graph
 
 def fetch_html(app_url: str) -> str:
-    req = RequestsWrapper()
-    return req.get(app_url, headers={"User-Agent": "Mozilla/5.0"})
+    headers = {"User-Agent": "Mozilla/5.0"}
+    response = requests.get(app_url, headers=headers)
+    response.raise_for_status()
+    return response.text
 
 def extract_features(html_content: str) -> str:
     loader = BSHTMLLoader.from_html_string(html_content)
